@@ -1,0 +1,262 @@
+{
+   "model" : {
+      "num_atom" : 5,
+      "num_recycle" : 2,
+      "embeddings_and_seqformer" : {
+         "seqformer_num_block" : 1,
+         "seq_channel" : 512,
+         "pair_channel" : 128,
+         "max_relative_feature" : 32,
+         "index_embed_size": 32,  
+         "esm" : {
+            "enabled" : true,
+            "embed_channel" : 2560,
+            "num_layers":36,
+            "dropout_rate":0.1,
+	         "norm":true,
+            "esm_embed" : {
+               "return_attnw": false,
+               "sep_pad_num":48,
+               "repr_layer":[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36], 
+               "model_path":"./trained_model/esm2_t36_3B_UR50D.pt"
+            }
+         },
+	      "recycle_features" : true,
+         "recycle_pos" : true,
+         "prev_pos" : {
+            "min_bin" : 3.375,
+            "num_bins" : 15,
+            "max_bin" : 21.375
+         },
+         "seqformer" : {
+            "seq_attention_with_pair_bias" : {
+               "orientation" : "per_row",
+               "num_head" : 32,
+	            "inp_kernels":[],
+               "dropout_rate" : 0.1,
+               "shared_dropout" : true
+         },
+            "seq_transition" : {
+               "orientation" : "per_row",
+               "num_intermediate_factor" : 4,
+               "dropout_rate" : 0,
+               "shared_dropout" : true
+            },
+            "outer_product_mean" : {
+               "orientation" : "per_row",
+               "num_outer_channel" : 64,
+               "dropout_rate" : 0,
+               "shared_dropout" : true
+            },
+            "triangle_multiplication_outgoing" : {
+               "orientation" : "per_row",
+               "num_intermediate_channel" : 128,
+               "gating":true,
+               "num_head":4,
+               "inp_kernels":[],
+               "dropout_rate" : 0.1,
+               "shared_dropout" : false
+            },
+            "triangle_multiplication_incoming" : {
+               "orientation" : "per_column",
+               "num_intermediate_channel" : 128,
+               "gating":true,
+               "num_head":4,
+               "inp_kernels":[],
+               "dropout_rate" : 0.1,
+               "shared_dropout" : false
+            },
+            "triangle_attention_starting_node" : {
+               "orientation" : "per_row",
+               "num_head" : 4,
+               "gating":true,
+               "inp_kernels":[],
+               "dropout_rate" : 0.1,
+               "shared_dropout" : false
+            },
+            "triangle_attention_ending_node" : {
+               "orientation" : "per_column",
+               "num_head" : 4,
+               "gating":true,
+               "inp_kernels":[],
+               "dropout_rate" : 0.1,
+               "shared_dropout" : false
+            },
+            "pair_transition" : {
+               "orientation" : "per_row",
+               "num_intermediate_factor" : 4,
+               "dropout_rate" : 0,
+               "shared_dropout" : true
+            }
+         }
+      },
+      "heads" : {
+         "diffusion_module" : {
+            "Path_score": false,
+            "coordinate_scaling": 0.1,
+            "num_blocks": 4,
+            "node_embed_size": 256,
+            "edge_embed_size": 128,
+            "embed": {
+               "index_embed_size": 32,
+               "num_bins": 22,
+               "min_bin": 1e-5,
+               "max_bin": 20.0,
+               "embed_self_conditioning": true
+            },
+            "IPA" : {
+               "num_layer" : 8,
+               "position_scale" : 10,
+               "torsion" : {
+                  "num_residual_block" : 2,
+                  "atom_clamp_distance" : 10,
+                  "num_channel" : 128
+               },
+               "num_layer_in_transition" : 3,
+               "clash_overlap_tolerance" : 1.5,
+               "num_head" : 12,
+               "num_channel" : 256,
+               "num_scalar_qk" : 16,
+               "num_scalar_v" : 16,
+               "num_point_qk" : 4,
+               "num_point_v" : 8,
+               "dropout" : 0.1
+            }
+         },
+         "predicted_lddt" : {
+            "num_channel": 256,
+            "num_hidden_channel": 128,
+            "index_embed_size": 32
+         },
+         "sequence_module" : {
+            "num_channel": 256,
+            "num_hidden_channel": 128,
+            "index_embed_size": 32
+         },
+         "distogram" : {
+            "first_break" : 2.3125,
+            "last_break" : 21.6875,
+            "num_bins" : 64,
+            "index_embed_size": 32
+         },
+         "tmscore" : {
+            "num_atom" : 5
+         },
+         "metric" : {}
+      }
+   },
+   "loss" : {
+      "diffusion_rigids" : {
+         "enabled":true,
+         "config" : {
+            "Path_score" : false,
+            "embed_self_conditioning" : true, 
+            "coordinate_scaling" : 0.1,
+            "trans_loss_weight": 1.0,
+            "rot_loss_weight": 0.5,
+            "rot_loss_t_threshold": 0.2,
+            "separate_rot_loss": true,
+            "trans_x0_t_threshold": 1.0
+         },
+         "loss_fn": "diffusion_rigids_loss",
+         "weight" : 1.0
+      },
+      "diffusion_seq" : {
+         "enabled":true,
+         "config" : {
+            "ratio_eps" : 1e-9,
+            "nll_weight" : 1
+         },
+         "loss_fn": "diffusion_seq_loss",
+         "weight" : 0.2
+      },
+      "folding" : {
+	      "enabled":true,
+         "config" : {
+            "t_filter": 0.25,
+	         "use_full_atom":true,
+            "chi_weight" :  0.0,
+            "angle_norm_weight" : 0.0,
+            "sidechain_fape_weight" : 0.0,
+            "backbone_fape_weight" : 0.5,
+	         "calpha_local_fape_weight":0.0,
+            "local_fape" : {
+               "loop_weight":{
+               "enabled":false,
+                  "weight":1.0
+               },
+               "fape_min" : 1e-06,
+               "loss_unit_distance" : 5.0,
+               "clamp_distance" : 5.0,
+               "clamp_type" : "relu",
+               "unclamped_ratio" : 0.1
+            },
+            "fape" : {
+               "weight" : 1.0,
+	            "loop_weight":{
+	       	      "enabled":false,
+		            "weight":1.0
+	            },
+               "fape_min" : 1e-06,
+               "loss_unit_distance" : 10.0,
+               "clamp_distance" : 10.0,
+               "clamp_type" : "relu",
+               "unclamped_ratio" : 0.1
+            },
+	         "interface_fape" : {
+               "interface_weight": 0.5, 
+               "loss_unit_distance" : 20.0,
+               "clamp_distance" : 30.0
+	         },
+            "violation_tolerance_factor" : 12,
+            "structural_violation_loss_weight" : 0.03,
+            "clash_overlap_tolerance": 1.5,
+            "between_chain_factor": 0.2,
+            "average_clashes": true
+         },
+         "loss_fn" : "folding_loss",
+         "weight" : 1
+      },
+      "distogram" : {
+         "enabled":true,
+         "config" : {
+            "t_filter": 0.25
+         },
+         "loss_fn" : "distogram_loss",
+         "weight" : 0.5
+      },
+      "predicted_lddt" : {
+         "enabled":true,
+         "config": {
+            "t_filter": 0.25
+         },
+         "loss_fn" : "predicted_lddt_loss",
+         "weight" : 0.1
+      }
+   },
+   "diffuser" : {
+      "inference_step" : 100,
+      "diffuse" : {
+         "diffuse_trans" : true,
+         "diffuse_rot" : true,
+         "diffuse_seq" : true
+      },
+      "r3" : {
+         "min_b": 0.1,
+         "max_b": 20.0,
+         "coordinate_scaling" : 0.1
+      },
+      "so3": {
+         "num_omega" : 1000,
+         "num_sigma" : 1000,
+         "min_sigma" : 0.1,
+         "max_sigma" : 1.5,
+         "schedule" : "logarithmic",
+         "cache_dir" : ".cache/" ,
+         "use_cached_score": false
+      },
+      "seq": {
+         "rate_const" : 0.3
+      }
+   }
+}

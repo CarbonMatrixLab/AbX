@@ -1,0 +1,16 @@
+[
+  ["make_to_device", {
+    "fields":["seq", "mask", "chain_id", "atom14_gt_positions", "atom14_gt_exists", "cdr_def", "residx",  "anchor_flag"],
+    "device":"%(device)s"}],
+  ["make_restype_atom_constants", {}],
+  ["make_atom14_alt_gt_positions", {}],
+  ["make_gt_frames", {}],
+  ["make_torsion_angles", {}],
+  ["make_pseudo_beta", {}],
+  ["make_calpha3_frames", {}],
+  ["make_diffuser_features", 
+  {
+    "generate_area": "H3",
+    "optimize_steps": [4,8,16,32,64] 
+  }]
+]
