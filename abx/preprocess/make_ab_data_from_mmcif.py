@@ -49,12 +49,13 @@ def parse_list(path):
 def make_chain_feature(chain):    
     residues = list(chain.get_residues())
     residues = [r for r in residues if r.get_resname() in residue_constants.restype_3to1.keys()]
+    
     str_seq = [seq1(r.get_resname()) for r in residues if r.get_resname() in residue_constants.restype_3to1.keys()]
     N = len(str_seq)
     
     coords = np.zeros((N, 14, 3), dtype=np.float32)
     coord_mask = np.zeros((N, 14), dtype=bool)
-    str_seq = []
+    # str_seq_new = []
     for jj, residue in enumerate(residues):
         if residue.get_resname() in residue_constants.restype_3to1.keys():
             res_atom14_list = residue_constants.restype_name_to_atom14_names[residue.resname]            
@@ -64,6 +65,7 @@ def make_chain_feature(chain):
                 atom14idx = res_atom14_list.index(atom.id)
                 coords[jj, atom14idx] = atom.get_coord()
                 coord_mask[jj, atom14idx]= True
+
 
     feature = dict(
             str_seq=''.join(str_seq),
@@ -175,10 +177,10 @@ def make_pdb_npz(struc, chain_ids, heavy_chain_id, light_chain_id, antigen_chain
         for i, antigen_chain in enumerate(antigen_chain_id):
             if antigen_chain not in chain_ids:
                 continue
-            antigen_feature = make_feature(struc[antigen_chain])
+            antigen_feature = make_chain_feature(struc[antigen_chain])
             antigen_features.append(antigen_feature)
         features.update(merge_chains(antigen_features))
-
+    pdb.set_trace()
     return features
 
 
@@ -320,7 +322,7 @@ def process_pdb(code, chain_ids, args):
     mmcif_file = os.path.join(args.data_dir, f'{code}.pdb')
     try:
         parser = PDBParser()
-        struc = parser.get_structure('model', code)
+        struc = parser.get_structure('model', mmcif_file)
         # parsing_result = mmcif_parse(file_id=code, mmcif_file=mmcif_file)
     except PDBConstructionException as e:
         logging.warning('mmcif_parse: %s {%s}', mmcif_file, str(e))
@@ -357,7 +359,7 @@ def process_pdb(code, chain_ids, args):
             continue
         
         try:
-            feature = make_pdb_npz(struc, pdb_chain_id, heavy_chain_id, light_chain_id, antigen_chain_id)
+            feature = make_pdb_npz(struc, pdb_chain_id, heavy_chain_id, light_chain_id, antigen_chain_ids)
             save_feature(feature, code, orig_heavy_chain_id, orig_light_chain_id, antigen_chain_ids, args.output_dir)
             logging.info(f'succeed: {mmcif_file} {orig_heavy_chain_id} {orig_light_chain_id}')
         except Exception as e:
@@ -377,8 +379,10 @@ def main():
     parser.add_argument('--data_mode', type=str, required=True, help=['pdb', 'mmcif'])
     args = parser.parse_args()
     os.makedirs(args.output_dir, exist_ok=True)
-
-    func = functools.partial(process, args=args)
+    if args.data_mode == 'mmcif':
+        func = functools.partial(process, args=args)
+    else:
+        func = functools.partial(process_pdb, args=args)
     
     with mp.Pool(args.cpus) as p:
         p.starmap(func, parse_list(args.summary_file))
