@@ -10,6 +10,8 @@ Institute of Computing Technology, Chinese Academy of Sciences  <br>
 
 ## Installation
 
+If you encounter any issues with the installation or would like to report a bug, please feel free to open an issue on GitHub at https://github.com/CarbonMatrixLab/AbX/issues.
+
 ### Setting up the AbX Environment
 
 To install AbX, it is recommended to create a Conda environment and install the necessary dependencies by following these steps:
@@ -113,6 +115,27 @@ CUDA_VISIBLE_DEVICES=0 python inference.py  \
     --output_dir ./output/DiffAb_optimize \
     --mode trajectory
 ```
+
+### Design CDRs given Antibody-Antigen Complex
+
+To generate CDRs of given antibdody-antigen complexes in the PDB format, use the following:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python design.py  \
+    --model ./trained_model/abx_diffab.ckpt \
+    --model_features ./config/config_data_feature.json \
+    --model_config ./config/config_model.json \
+    --batch_size 1 \
+    --num_samples 100 \
+    --pdb_file  ./test_data/6ct7_H_L_S.pdb \
+    --output_dir ./output/design \
+    --mode design
+```
+
+The example of input antibody-antigen complexes is `6ct7_H_L_S.pdb`, where `H` is the heavy chain id, `L` is the light chain id and `S` is the antigen chain id.
+
+
+
 
 ### Relaxing the Designed Proteins
 

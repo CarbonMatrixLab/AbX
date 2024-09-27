@@ -16,9 +16,74 @@ from torch.nn import functional as F
 from abx.common import protein, residue_constants
 from abx.utils import exists
 
-import pdb
+from Bio.PDB.PDBExceptions import PDBConstructionException
+from Bio.PDB.PDBParser import PDBParser
 
+from abx.common import residue_constants
+from abx.data.mmcif_parsing import parse as mmcif_parse
+from abx.preprocess.numbering import renumber_ab_seq, get_ab_regions
+from Bio.SeqUtils import seq1
+import pdb
+import traceback
+from abx.preprocess.make_ab_data_from_mmcif import *
 logger = logging.getLogger()
+
+
+def process_pdb(code, chain_ids, pdb_file):
+    logging.info(f'processing {code}, {",".join(["_".join(x) for x in chain_ids])}')
+    mmcif_file = pdb_file
+    try:
+        parser = PDBParser()
+        struc = parser.get_structure('model', mmcif_file)[0]
+        # parsing_result = mmcif_parse(file_id=code, mmcif_file=mmcif_file)
+    except PDBConstructionException as e:
+        logging.warning('mmcif_parse: %s {%s}', mmcif_file, str(e))
+    except Exception as e:
+        logging.warning('mmcif_parse: %s {%s}', mmcif_file, str(e))
+        raise Exception('...') from e
+    pdb_chain_id = list((struc.get_chains()))
+    pdb_chain_id = [id.id for id in pdb_chain_id]
+    def _parse_chain_id(heavy_chain_id, light_chain_id):
+        if heavy_chain_id.islower() and heavy_chain_id.upper() == light_chain_id:
+            heavy_chain_id = heavy_chain_id.upper()
+        elif light_chain_id.islower() and light_chain_id.upper() == heavy_chain_id:
+            light_chain_id = light_chain_id.upper()
+        return heavy_chain_id, light_chain_id
+
+    orig_heavy_chain_id, orig_light_chain_id, orig_antigen_chain_id = chain_ids
+    antigen_chain_ids = orig_antigen_chain_id.split('|')
+    antigen_chain_ids = [s.replace(" ", "") for s in antigen_chain_ids]
+    
+    heavy_chain_id, light_chain_id = _parse_chain_id(orig_heavy_chain_id, orig_light_chain_id)
+
+    if ((heavy_chain_id and heavy_chain_id not in pdb_chain_id) or
+        (light_chain_id and light_chain_id not in pdb_chain_id)):
+        logging.warning(f'{code} {heavy_chain_id} {light_chain_id}: chain ids not exist.')
+        traceback.print_exc()
+    
+    flag = 0
+    for antigen_chain_id in antigen_chain_ids:
+        if antigen_chain_id not in pdb_chain_id:
+            logging.warning(f"antigen id: {antigen_chain_id} not exist")
+            flag += 1
+    
+    if flag > 0:
+        traceback.print_exc()
+    pdb.set_trace()
+    try:
+        feature = make_pdb_npz(struc, pdb_chain_id, heavy_chain_id, light_chain_id, antigen_chain_ids)
+        # save_feature(feature, code, orig_heavy_chain_id, orig_light_chain_id, antigen_chain_ids, args.output_dir)
+        logging.info(f'succeed: {mmcif_file} {orig_heavy_chain_id} {orig_light_chain_id}')
+        return feature
+
+
+    except Exception as e:
+        traceback.print_exc()
+        logging.error(f'make structure: {mmcif_file} {orig_heavy_chain_id} {orig_light_chain_id} {str(e)}')
+
+
+
+
 
 
 def pad_for_batch(items, batch_length, dtype):
