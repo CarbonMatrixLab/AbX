@@ -296,7 +296,6 @@ class IgStructureData(torch.utils.data.IterableDataset):
         self.is_training = is_training
         # pdb.set_trace()
         self.ret = process_pdb(self.code,self.chain_ids, pdb_file)
-        pdb.set_trace()
         logger.info(f'Target antibody-antigen complex {pdb_file} max_antigen_seq_len= {max_antigen_seq_len}')
         self.epoch_count = 0
     

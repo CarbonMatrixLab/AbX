@@ -6,14 +6,14 @@ from torch import nn
 from torch.nn import functional as F
 from einops import rearrange
 
-from abfold.model.utils import batched_select
-from abfold.model import r3
-from abfold.model import quat_affine
-from abfold.model.common_modules import(
+from abx.model.utils import batched_select
+from abx.model import r3
+from abx.model import quat_affine
+from abx.model.common_modules import(
         Linear,
         LayerNorm)
-from abfold.model.seqformer import SpatialDepthWiseInception
-from abfold.model.sidechain import MultiRigidSidechain
+from abx.model.seqformer import SpatialDepthWiseInception
+from abx.model.sidechain import MultiRigidSidechain
 
 logger = logging.getLogger(__name__)
 

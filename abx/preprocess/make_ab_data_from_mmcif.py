@@ -180,7 +180,6 @@ def make_pdb_npz(struc, chain_ids, heavy_chain_id, light_chain_id, antigen_chain
             antigen_feature = make_chain_feature(struc[antigen_chain])
             antigen_features.append(antigen_feature)
         features.update(merge_chains(antigen_features))
-    pdb.set_trace()
     return features
 
 

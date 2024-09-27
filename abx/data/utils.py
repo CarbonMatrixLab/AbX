@@ -69,7 +69,6 @@ def process_pdb(code, chain_ids, pdb_file):
     
     if flag > 0:
         traceback.print_exc()
-    pdb.set_trace()
     try:
         feature = make_pdb_npz(struc, pdb_chain_id, heavy_chain_id, light_chain_id, antigen_chain_ids)
         # save_feature(feature, code, orig_heavy_chain_id, orig_light_chain_id, antigen_chain_ids, args.output_dir)

@@ -19,6 +19,7 @@ To install AbX, it is recommended to create a Conda environment and install the 
 ```bash
 git clone git@github.com:CarbonMatrixLab/AbX.git 
 conda env create -f environment.yml
+pip install fair-esm 
 ```
 
 PyRosetta is required to relax the generated structures and compute binding energy. Please refer to the installation guide provided [here](https://www.pyrosetta.org/) for further instructions.

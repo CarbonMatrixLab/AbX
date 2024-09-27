@@ -15,7 +15,6 @@ from einops import rearrange
 import numpy as np
 
 
-#from abfold.data import dataset
 from abx.data import dataset
 from abx.data.utils import save_pdb
 from abx.common import residue_constants
