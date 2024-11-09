@@ -294,35 +294,16 @@ class IgStructureData(torch.utils.data.IterableDataset):
         self.reduce_num = reduce_num
         self.is_cluster_idx = is_cluster_idx
         self.is_training = is_training
-        # pdb.set_trace()
         self.ret = process_pdb(self.code,self.chain_ids, pdb_file)
-        pdb.set_trace()
         logger.info(f'Target antibody-antigen complex {pdb_file} max_antigen_seq_len= {max_antigen_seq_len}')
         self.epoch_count = 0
     
     def __len__(self):
         return 1
     
-    # def _get_name_idx(self):
-    #     if self.reduce_num is None:
-    #         return self.name_idx
-
-    #     random.seed(2022 + self.epoch_count)
-    #     random.shuffle(self.name_idx)
-    #     self.epoch_count += 1
-    #     logging.info(f'data: epoch_count={self.epoch_count} reduce_num={self.reduce_num} all={len(self.name_idx)} ex={",".join([str(x) for x in self.name_idx[:4]])}')
-        
-    #     return self.name_idx[:self.reduce_num]
 
     def __iter__(self):
-        # name_idx = self._get_name_idx()
-        # for item in name_idx:
-        #     if self.is_cluster_idx:
-        #         name = item.get_next()
-        #     else:
-        #         name = item
         ret = self.get_structure_label_npz()
-        #     if ret:
         antigen_len = len(ret.get('antigen_str_seq', ''))
         
         if antigen_len > self.max_antigen_seq_len:

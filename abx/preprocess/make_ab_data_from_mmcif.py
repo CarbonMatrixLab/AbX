@@ -157,17 +157,25 @@ def make_pdb_npz(struc, chain_ids, heavy_chain_id, light_chain_id, antigen_chain
         updated_feature.update(dict(cdr_def=cdr_def, numbering=domain_numbering))
         
         return updated_feature
+    all_chain = list(struc.get_chains())
+
+    # 查找特定链的信息
+    def _get_chain_info(chain_id):
+        for chain in all_chain:
+            if chain.id == chain_id:
+                return chain
+        return None
     
     antibody_feature = []
     features = {}
-
     if heavy_chain_id:
-        heavy_feature = make_chain_feature(struc[heavy_chain_id])
+        
+        heavy_feature = make_chain_feature(_get_chain_info(heavy_chain_id))
         heavy_feature = _make_domain(heavy_feature, 'H')
         antibody_feature.append(heavy_feature)
     
     if light_chain_id:
-        light_feature = make_chain_feature(struc[light_chain_id])
+        light_feature = make_chain_feature(_get_chain_info(light_chain_id))
         light_feature = _make_domain(light_feature, 'L')
         antibody_feature.append(light_feature)
     features.update(merge_chains(antibody_feature))
@@ -177,10 +185,9 @@ def make_pdb_npz(struc, chain_ids, heavy_chain_id, light_chain_id, antigen_chain
         for i, antigen_chain in enumerate(antigen_chain_id):
             if antigen_chain not in chain_ids:
                 continue
-            antigen_feature = make_chain_feature(struc[antigen_chain])
+            antigen_feature = make_chain_feature(_get_chain_info(antigen_chain))
             antigen_features.append(antigen_feature)
         features.update(merge_chains(antigen_features))
-    pdb.set_trace()
     return features
 
 
@@ -341,7 +348,6 @@ def process_pdb(code, chain_ids, args):
     for orig_heavy_chain_id, orig_light_chain_id, orig_antigen_chain_id in chain_ids:
         antigen_chain_ids = orig_antigen_chain_id.split('|')
         antigen_chain_ids = [s.replace(" ", "") for s in antigen_chain_ids]
-        
         heavy_chain_id, light_chain_id = _parse_chain_id(orig_heavy_chain_id, orig_light_chain_id)
 
         if ((heavy_chain_id and heavy_chain_id not in pdb_chain_id) or
@@ -386,6 +392,7 @@ def main():
     
     with mp.Pool(args.cpus) as p:
         p.starmap(func, parse_list(args.summary_file))
+
 
 if __name__ == '__main__':
     

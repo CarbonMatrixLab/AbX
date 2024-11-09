@@ -69,7 +69,7 @@ def process_pdb(code, chain_ids, pdb_file):
     
     if flag > 0:
         traceback.print_exc()
-    pdb.set_trace()
+    # pdb.set_trace()
     try:
         feature = make_pdb_npz(struc, pdb_chain_id, heavy_chain_id, light_chain_id, antigen_chain_ids)
         # save_feature(feature, code, orig_heavy_chain_id, orig_light_chain_id, antigen_chain_ids, args.output_dir)
@@ -243,6 +243,8 @@ def save_pdb(str_heavy_seq, heavy_chain, str_light_seq, light_chain, coord, pdb_
     model.add(heavy_chain)
     model.add(light_chain)
     start = 0
+    import pdb as pp
+    # pp.set_trace()
     for i in range(len(antigen_data['antigen_chains'])):
         id = i + 2
         chain = antigen_data['antigen_chains'][i]
@@ -252,6 +254,7 @@ def save_pdb(str_heavy_seq, heavy_chain, str_light_seq, light_chain, coord, pdb_
         antigen_str_seq = antigen_data['antigen_str_seq'][start:start+chain_len]
         antigen_coords = antigen_data['antigen_coords'][start:start+chain_len]
         antigen_mask = antigen_data['antigen_coord_mask'][start:start+chain_len, residue_constants.atom_order['CA']]
+        start += chain_len
         antigen_chain = make_chain(antigen_str_seq, antigen_coords, chain, plddt_b_factors, antigen_mask)
         model.add(antigen_chain)
 
