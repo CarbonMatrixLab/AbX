@@ -2,9 +2,8 @@
 
 ![AbX Logo](./figures/AbX.png)
 
-**Tian Zhu**, Milong Ren, **Haicang Zhang**   <br>
-*Correspondence should be addressed to Haicang Zhang(zhanghaicang@ict.ac.cn)*  <br> 
-Institute of Computing Technology, Chinese Academy of Sciences  <br> 
+**Tian Zhu**, Milong Ren, Haicang Zhang   <br>
+
 
 [Link to Paper at ICML 2024](https://openreview.net/pdf?id=1YsQI04KaN)
 
