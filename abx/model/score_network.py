@@ -29,7 +29,7 @@ logger = logging.getLogger()
 
 class IpaScore(nn.Module):
     """
-    Modified from Structure Module of AbFold2
+    Modified from Structure Module of AlphaFold2
     Return:
         rot_score: [B, N, N, 3]
         trans_score: [B, N, 3]
