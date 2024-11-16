@@ -2,9 +2,7 @@
 
 ![AbX Logo](./figures/AbX.png)
 
-**Tian Zhu**, Milong Ren, Haicang Zhang   <br>
-
-
+T. Zhu, M. Ren, H. Zhang. Antibody Design Using a Score-based Diffusion Model Guided by Evolutionary. ICML 2024. <br>
 [Link to Paper at ICML 2024](https://openreview.net/pdf?id=1YsQI04KaN)
 
 ## Installation
