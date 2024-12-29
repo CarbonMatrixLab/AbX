@@ -38,7 +38,7 @@ We recommend using the `mmCIF` format for PDB structures, as it provides compreh
 
 ### Pre-trained Models
 
-1. Download the [**AbX-DiffAb**](https://abx1.s3.amazonaws.com/checkpoint/abx_diffab.ckpt) and [**AbX-RAbD**](https://abx1.s3.amazonaws.com/checkpoint/abx_rabd.ckpt) model weights , and place them in the `./trained_model` directory.
+1. Download the [**AbX-DiffAb**](https://drive.google.com/file/d/1eQsQ_Qc_7qeG4VOFRxdBp0kd0hhKrLVv/view?usp=drive_link) and [**AbX-RAbD**](https://drive.google.com/file/d/1vZeWQUN5uPho6pU9RsWVJ5bMVTOtijTq/view?usp=drive_link) model weights , and place them in the `./trained_model` directory.
 2. Download the **ESM2** model weights from [here](https://dl.fbaipublicfiles.com/fair-esm/models/esm2_t33_650M_UR50D.pt) and the **contact regressor** weights from [here](https://dl.fbaipublicfiles.com/fair-esm/regression/esm2_t33_650M_UR50D-contact-regression.pt), and save these files in the `./trained_model` directory.
 
 ## Usage Instructions
