@@ -39,7 +39,7 @@ We recommend using the `mmCIF` format for PDB structures, as it provides compreh
 ### Pre-trained Models
 
 1. Download the **AbX-DiffAb** and **AbX-RAbD** model weights [here](https://zenodo.org/records/14577013?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImFkYzk5NzZhLWNjM2ItNGYzNS1hNTQyLWMxMzQyNDIyYTY2NSIsImRhdGEiOnt9LCJyYW5kb20iOiJiMmUyNzkzNmYxNDI1MDE5YzYyNzBlNzVkMWQ3MzQwNCJ9.P1juTzvnN6HzglwgUfOnb551MODvUGx6NgwvWnrhI51W_jl8nulAW7c5mnkEsgs_O6sp03G8NiowEs88y_ohlw), and place them in the `./trained_model` directory.
-2. Download the **ESM2** model weights from [here](https://dl.fbaipublicfiles.com/fair-esm/models/esm2_t33_650M_UR50D.pt) and the **contact regressor** weights from [here](https://dl.fbaipublicfiles.com/fair-esm/regression/esm2_t33_650M_UR50D-contact-regression.pt), and save these files in the `./trained_model` directory.
+2. Download the **ESM2** model weights from [here](https://dl.fbaipublicfiles.com/fair-esm/models/esm2_t36_3B_UR50D.pt) and the **contact regressor** weights from [here](https://dl.fbaipublicfiles.com/fair-esm/regression/esm2_t36_3B_UR50D-contact-regression.pt), and save these files in the `./trained_model` directory.
 
 ## Usage Instructions
 
